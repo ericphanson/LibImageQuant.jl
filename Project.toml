@@ -1,0 +1,13 @@
+name = "LibImageQuant"
+uuid = "65eadcc4-e045-440a-9e0d-07418b613f72"
+authors = ["Eric P. Hanson"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.10"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
