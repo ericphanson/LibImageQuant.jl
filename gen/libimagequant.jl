@@ -1,7 +1,8 @@
 module LibImageQuantWrapper
 
-using LibImageQuant_jll
-export LibImageQuant_jll
+# using LibImageQuant_jll
+# export LibImageQuant_jll
+const libimagequant = "/Users/eph/libimagequant/imagequant-sys/usr/local/lib/libimagequant.dylib"
 
 using CEnum
 

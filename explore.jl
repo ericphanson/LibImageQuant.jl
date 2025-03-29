@@ -13,5 +13,5 @@ matrix = colorbuffer(fig)
 PNGFiles.save("test-mat.png", matrix)
 CairoMakie.save("test-cm.png", fig)
 
-output = quantize_image(matrix, :RGBA, :RGBA)
+output = quantize_image(matrix)
 PNGFiles.save("test-iq.png", output)
