@@ -14,8 +14,11 @@ include("../gen/libimagequant.jl")
 using .LibImageQuantWrapper: liq_color, liq_palette, liq_result, liq_error, LIQ_OK
 
 # functions
-using .LibImageQuantWrapper: liq_image_create_rgba,
-                             liq_image_quantize, liq_write_remapped_image, liq_get_palette
+using .LibImageQuantWrapper: liq_attr_create,
+                             liq_image_create_rgba,
+                             liq_image_quantize, liq_write_remapped_image,
+                             liq_set_max_colors,
+                             liq_get_palette
 
 # cleanup
 using .LibImageQuantWrapper: liq_attr_destroy,
@@ -26,7 +29,7 @@ struct LibImageQuantError <: Exception
     code::liq_error
 end
 function Base.showerror(io::IO, e::LibImageQuantError)
-    return print(io, "LibImageQuantError: ", prefix, " with code ", e.code)
+    return print(io, "LibImageQuantError: ", e.prefix, " with code ", e.code)
 end
 
 function jl_to_c(matrix)
@@ -40,7 +43,7 @@ function to_argb32(c::liq_color)
     return ARGB32(to_N0f8(c.r), to_N0f8(c.g), to_N0f8(c.b), to_N0f8(c.a))
 end
 
-function _quantize_image(matrix; colors, limit, target)
+function _quantize_image(matrix; colors)
     height, width = size(matrix)
     input_data = jl_to_c(matrix)
 
@@ -112,13 +115,13 @@ end
 
 to_N0f8(c::UInt8) = reinterpret(ColorTypes.N0f8, c)
 
-function quantize_image(matrix; colors=256, limit=0, target=100)
-    output_data, palette = _quantize_image(matrix; colors, limit, target)
+function quantize_image(matrix; colors=256)
+    # TODO- support the options pngquant supports
+    output_data, palette = _quantize_image(matrix; colors)
     output_data = permutedims(output_data)
     color_vec = to_argb32.(collect(palette.entries)[1:(palette.count)])
-    # there's gotta be a better way than +1 here, since it converts
-    # our tiny UInt8's into Int64's. But we need our indices to be one-based. Maybe offset arrays for colors so we can use a 0-based index?
-    return IndirectArray(output_data .+ 1, color_vec)
+    # we need our indices to be 1-based, so we have to promote from UInt8 to Int16 to get the range 1:256.
+    return IndirectArray(output_data .+ Int16(1), color_vec)
 end
 
 end
