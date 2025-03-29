@@ -4,6 +4,7 @@ using ColorTypes
 using IndirectArrays
 
 export quantize_image
+export COLOR_ORDERS
 
 # TODO- jll
 const libimagequant = "/Users/eph/libimagequant/imagequant-sys/usr/local/lib/libimagequant.dylib"
@@ -20,22 +21,41 @@ struct LiqPalette
     entries::NTuple{256,LiqColor}
 end
 
-function jl_to_c(image)
-    image = permutedims(image)
+const ColorOrder = Symbol
+const COLOR_ORDERS = [:ARGB, :ABGR, :RGBA, :BGRA]
 
-    #TODO- somehow this is the wrong type, but I'm close...
-    
-    image = ColorTypes.ABGR.(image)
-    # we collect now since `cconvert` will have to copy anyway
+function jl_to_c(image, order::ColorOrder)
+    @show order
+    # order = :RGBA
+    # order = Symbol(order)
+    T = getproperty(ColorTypes, order)
+    @show T
+    @show T === ColorTypes.RGBA
+    # T =ColorTypes.RGBA
+    image = permutedims(image)
+    image1 = ColorTypes.RGBA.(image)
+    image2 = getproperty(ColorTypes, order).(image)
+    @assert image1 == image2
+    image = image2
     input_data = collect(reinterpret(reshape, UInt8, image))
-    # input_data = permutedims(input_data, (3, 2, 1)) # width×height×4
-    return input_data
+    return copy(input_data)
 end
 
-# TODO defaults
-function _quantize_image(matrix; colors::Int=256, limit=0, target=100)
+function to_argb32(c::LiqColor, out_order::ColorOrder)
+    if out_order == :ARGB
+        return ARGB32(to_N0f8(c.a), to_N0f8(c.r), to_N0f8(c.g), to_N0f8(c.b))
+    elseif out_order == :ABGR
+        return ARGB32(to_N0f8(c.a), to_N0f8(c.b), to_N0f8(c.g), to_N0f8(c.r))
+    elseif out_order == :RGBA
+        return ARGB32(to_N0f8(c.r), to_N0f8(c.g), to_N0f8(c.b), to_N0f8(c.a))
+    elseif out_order == :BGRA
+        return ARGB32(to_N0f8(c.b), to_N0f8(c.g), to_N0f8(c.r), to_N0f8(c.a))
+    end
+end
+
+function _quantize_image(matrix, in_order::ColorOrder; colors::Int=256, limit=0, target=100)
     height, width = size(matrix)
-    input_data = jl_to_c(matrix)
+    input_data = jl_to_c(matrix, in_order)
 
     # Create attribute handle
     attr = @ccall libimagequant.liq_attr_create()::Ptr{Cvoid}
@@ -124,15 +144,11 @@ function _quantize_image(matrix; colors::Int=256, limit=0, target=100)
 end
 
 to_N0f8(c::UInt8) = reinterpret(ColorTypes.N0f8, c)
-to_argb32(c::LiqColor) = ARGB32(to_N0f8(c.a), to_N0f8(c.r), to_N0f8(c.g), to_N0f8(c.b))
 
-# to_argb32(c::LiqColor) = ARGB32(to_N0f8(c.a), to_N0f8(c.b), to_N0f8(c.g), to_N0f8(c.r))
-
-function quantize_image(matrix)
-    output_data, palette = _quantize_image(matrix)
+function quantize_image(matrix, in_order::ColorOrder=:ABGR, out_order::ColorOrder=:ARGB)
+    output_data, palette = _quantize_image(matrix, in_order)
     output_data = permutedims(output_data)
-    colors = to_argb32.(collect(palette.entries)[1:(palette.count)]) # Convert to RGBA
-    # there's gotta be a better way that this +1
+    colors = to_argb32.(collect(palette.entries)[1:(palette.count)], out_order)
     return IndirectArray(output_data .+ 1, colors)
 end
 
