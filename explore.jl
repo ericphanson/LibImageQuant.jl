@@ -1,6 +1,6 @@
 using CairoMakie, PNGFiles, LibImageQuant
 
-plot = scatter(rand(1000), rand(1000))
+plot = scatter(rand(1000), rand(1000) .* 10)
 
 matrix = colorbuffer(plot)
 

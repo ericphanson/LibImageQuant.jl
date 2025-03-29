@@ -126,6 +126,8 @@ end
 to_N0f8(c::UInt8) = reinterpret(ColorTypes.N0f8, c)
 to_argb32(c::LiqColor) = ARGB32(to_N0f8(c.a), to_N0f8(c.r), to_N0f8(c.g), to_N0f8(c.b))
 
+# to_argb32(c::LiqColor) = ARGB32(to_N0f8(c.a), to_N0f8(c.b), to_N0f8(c.g), to_N0f8(c.r))
+
 function quantize_image(matrix)
     output_data, palette = _quantize_image(matrix)
     output_data = permutedims(output_data)
