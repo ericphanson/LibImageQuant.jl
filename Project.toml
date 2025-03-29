@@ -3,7 +3,17 @@ uuid = "65eadcc4-e045-440a-9e0d-07418b613f72"
 authors = ["Eric P. Hanson"]
 version = "1.0.0-DEV"
 
+[deps]
+CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+ColorTypes = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
+IndirectArrays = "9b13fd28-a010-5f03-acff-a1bbcff69959"
+PNGFiles = "f57f5aa1-a3ce-4bc8-8ab9-96f992907883"
+
 [compat]
+CairoMakie = "0.13.2"
+ColorTypes = "0.12.0"
+IndirectArrays = "1.0.0"
+PNGFiles = "0.4.4"
 julia = "1.10"
 
 [extras]
