@@ -45,7 +45,7 @@ function to_argb32(c::liq_color)
     return ARGB32(to_N0f8(c.r), to_N0f8(c.g), to_N0f8(c.b), to_N0f8(c.a))
 end
 
-function _quantize_image(matrix; colors)
+function _quantize_image_matrix(matrix; colors)
     height, width = size(matrix)
     input_data = jl_to_c(matrix)
 
@@ -117,11 +117,38 @@ end
 
 to_N0f8(c::UInt8) = reinterpret(ColorTypes.N0f8, c)
 
-function quantize_image(matrix::AbstractMatrix{T}; colors=256) where {T}
+# this provides a hook where can add dispaches to convert e.g. Makie figures
+# to matrices in extensions
+to_matrix(val) = val
+
+# the outer function just calls `to_matrix` then dispaches to `quantize_image_matrix`
+"""
+    quantize_image(image; colors=256)
+
+Uses libimagequant to quantize an image to a limited number of colors between 2 and 256,
+with 256 as the default. This can reduce the image size when saving as a PNG.
+
+Returns an `IndirectArray`, which is saved efficiently by PNGFiles.jl (used by default
+with CairoMakie when saving `.png` files).
+
+## Example
+
+```julia
+using CairoMakie, LibImageQuant
+
+fig = scatter(rand(1000), rand(1000))
+save("test-256.png", quantize_image(fig))
+save("test-8.png", quantize_image(fig; colors=8))
+save("test-original.png", fig)
+```
+"""
+quantize_image(val::Any; kw...) = quantize_image_matrix(to_matrix(val); kw...)
+
+function quantize_image_matrix(matrix::AbstractMatrix{T}; colors=256) where {T}
     # we will get more confusing errors from the C library so better to throw here
     isempty(matrix) && throw(ArgumentError("matrix is empty"))
     # TODO- support the options pngquant supports
-    output_data, palette = _quantize_image(matrix; colors)
+    output_data, palette = _quantize_image_matrix(matrix; colors)
     output_data = permutedims(output_data)
     color_vec = to_argb32.(collect(palette.entries)[1:(palette.count)])
     # we need our indices to be 1-based, so we have to promote from UInt8 to Int16 to get the range 1:256.
