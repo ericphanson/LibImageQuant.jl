@@ -7,7 +7,8 @@
 ## TODO
 
 - [ ] JLL: https://github.com/JuliaPackaging/Yggdrasil/pull/10853
-- [ ] use libimagequant C library to accept pixel matrix, retrieve palette & quantized image
-- [ ] convert to IndirectArray
+- [x] use libimagequant C library to accept pixel matrix, retrieve palette & quantized image
+- [x] convert to IndirectArray
+- [ ] tests
 - [ ] CairoMakie should test-only dep (or extension)
 - [ ] PNGFiles should test-only dep (or extension)
