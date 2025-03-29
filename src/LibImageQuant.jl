@@ -35,7 +35,9 @@ end
 function jl_to_c(matrix)
     matrix = permutedims(matrix)
     matrix = ColorTypes.RGBA.(matrix)
-    return collect(reinterpret(reshape, UInt8, matrix))
+    ret = collect(reinterpret(reshape, UInt8, matrix))
+    size(ret, 1) == 4 || throw(ArgumentError("expected 4 color channels"))
+    return ret
 end
 
 function to_argb32(c::liq_color)
@@ -115,7 +117,12 @@ end
 
 to_N0f8(c::UInt8) = reinterpret(ColorTypes.N0f8, c)
 
-function quantize_image(matrix; colors=256)
+function quantize_image(matrix::AbstractMatrix{T}; colors=256) where {T}
+    # we need to be able to reinterpret to bytes
+    isbitstype(T) ||
+        throw(ArgumentError("matrix elements must be a bitstype; got element type $(T)"))
+    # we will get more confusing errors from the C library so better to throw here
+    isempty(matrix) && throw(ArgumentError("matrix is empty"))
     # TODO- support the options pngquant supports
     output_data, palette = _quantize_image(matrix; colors)
     output_data = permutedims(output_data)

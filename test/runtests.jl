@@ -1,6 +1,6 @@
 using LibImageQuant
 using Test
-
+using IndirectArrays, ColorTypes
 using CairoMakie, PNGFiles
 using Random
 
@@ -18,37 +18,46 @@ matrix = colorbuffer(fig)
 
 # Save originals
 CairoMakie.save(joinpath(img_dir, "test-cm.png"), fig)
-
 output = quantize_image(matrix)
-PNGFiles.save(joinpath(img_dir, "test-iq.png"), output)
+@test output isa IndirectArray
+@test output.index isa Matrix{Int16}
+@test output.values isa Vector{ColorTypes.ARGB32}
+path = joinpath(img_dir, "test-iq.png")
+PNGFiles.save(path, output)
+# we could do some image testing here to automatically compare the two,
+# but for now I will inspect them manually
 
-for i in [0, 1, 3]
-    for n in [1, 4, 8]
-        if n == 1
-            i == 3 || continue
-        end
-        if i == 3
-            n == 1 || continue
-        end
-        PNGFiles.save(joinpath(img_dir,
-                               "test-mat-compression_strat_$i-compression_level_$n.png"),
-                      matrix; compression_strategy=i, compression_level=n)
+@testset "Errors" begin
+    @test_throws LibImageQuantError quantize_image(matrix; colors=0)
+    @test_throws LibImageQuantError quantize_image(matrix; colors=257)
+    @test_throws ArgumentError quantize_image([])
+    @test_throws ArgumentError quantize_image(zeros(UInt32, 0, 0))
+end
 
-        for q in 1:8
-            N = 2^q
-            output = quantize_image(matrix; colors=N)
-            N_str = lpad(N, 3, "0")
-
-            PNGFiles.save(joinpath(img_dir,
-                                   "test-iq-$N_str-compression_strat_$i-compression_level_$n.png"),
-                          output; compression_strategy=i, compression_level=n)
-        end
+# this is more for seeing how quantization affects sizes
+# than truly testing the wrapper, but we might as well call `quantize_image`
+# in a few cases here in the tests
+@testset "Quantization shrinks size in common case" begin
+    orig_size = filesize(joinpath(img_dir, "test-cm.png"))
+    for q in 1:8
+        N = 2^q
+        output = quantize_image(matrix; colors=N)
+        @test output isa IndirectArray
+        @test output.index isa Matrix{Int16}
+        @test output.values isa Vector{ColorTypes.ARGB32}
+        @test length(output.values) <= N
+        @test size(output) == size(matrix)
+        N_str = lpad(N, 3, "0")
+        path = joinpath(img_dir, "test-iq-$N_str.png")
+        PNGFiles.save(path, output)
+        @test filesize(path) < orig_size
     end
 end
 
-# start 0, level 4 or 8
-# start 1, level 4 or 8
-# start 3, level 1
+uint32s = reshape(UInt32.([range(typemin(UInt32), typemax(UInt32); step=0x0000431c);
+                           zero(UInt32)]), 500, 500)
+matrix = reinterpret(ARGB32, uint32s)
+PNGFiles.save(joinpath(img_dir, "test-gradient.png"), matrix)
 
-
-3,1
+output = quantize_image(matrix)
+PNGFiles.save(joinpath(img_dir, "test-gradient-iq.png"), output)
