@@ -118,9 +118,6 @@ end
 to_N0f8(c::UInt8) = reinterpret(ColorTypes.N0f8, c)
 
 function quantize_image(matrix::AbstractMatrix{T}; colors=256) where {T}
-    # we need to be able to reinterpret to bytes
-    isbitstype(T) ||
-        throw(ArgumentError("matrix elements must be a bitstype; got element type $(T)"))
     # we will get more confusing errors from the C library so better to throw here
     isempty(matrix) && throw(ArgumentError("matrix is empty"))
     # TODO- support the options pngquant supports

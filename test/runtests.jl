@@ -30,7 +30,8 @@ PNGFiles.save(path, output)
 @testset "Errors" begin
     @test_throws LibImageQuantError quantize_image(matrix; colors=0)
     @test_throws LibImageQuantError quantize_image(matrix; colors=257)
-    @test_throws ArgumentError quantize_image([])
+    @test_throws MethodError quantize_image([])
+    @test_throws ArgumentError quantize_image(reshape([], 0, 0))
     @test_throws ArgumentError quantize_image(zeros(UInt32, 0, 0))
 end
 
