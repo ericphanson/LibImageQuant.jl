@@ -8,4 +8,8 @@ matrix = colorbuffer(plot)
 
 PNGFiles.save("test-mat.png", matrix)
 CairoMakie.save("test-cm.png", plot)
-PNGFiles.save("test-iq.png", quantize_image(matrix))
+
+output = quantize_image(matrix)
+
+PNGFiles.save("test-iq.png", output)
+unique(output)

@@ -21,14 +21,19 @@ struct LiqPalette
 end
 
 function jl_to_c(image)
-    image = ColorTypes.RGBA.(image)
+    image = permutedims(image)
+
+    #TODO- somehow this is the wrong type, but I'm close...
+    
+    image = ColorTypes.ABGR.(image)
     # we collect now since `cconvert` will have to copy anyway
     input_data = collect(reinterpret(reshape, UInt8, image))
-    input_data = permutedims(input_data, (3, 2, 1)) # width×height×4
+    # input_data = permutedims(input_data, (3, 2, 1)) # width×height×4
     return input_data
 end
 
-function _quantize_image(matrix)
+# TODO defaults
+function _quantize_image(matrix; colors::Int=256, limit=0, target=100)
     height, width = size(matrix)
     input_data = jl_to_c(matrix)
 
@@ -38,6 +43,21 @@ function _quantize_image(matrix)
     if attr == C_NULL
         throw(OutOfMemoryError())
     end
+
+    ret = @ccall libimagequant.liq_set_max_colors(attr::Ptr{Cvoid}, colors::Cint)::Cint;
+    if ret != 0
+        @ccall libimagequant.liq_attr_destroy(attr::Ptr{Cvoid})::Cvoid
+        throw(ErrorException("`liq_set_max_colors` failed error code $ret"))
+    end
+
+    # ret = @ccall libimagequant.liq_set_quality(attr::Ptr{Cvoid}, limit::Cint, target::Cint)::Cint;
+    # if ret != 0
+        # @ccall libimagequant.liq_attr_destroy(attr::Ptr{Cvoid})::Cvoid
+        # throw(ErrorException("`liq_set_quality` failed error code $ret"))
+    # end
+
+
+
 
     # Create image handle
     # SAFETY: input_data must be preserved until after liq_image_create_rgba returns
@@ -66,6 +86,16 @@ function _quantize_image(matrix)
     # Get the remapped image data
     output_data = Matrix{Cuchar}(undef, width, height)
     pixel_size = width * height
+
+    # size_t pixels_size = width * height;
+    # unsigned char *raw_8bit_pixels = malloc(pixels_size);
+    # ret = @ccall libimagequant.liq_set_dithering_level(res[]::Ptr{Cvoid}, 1.0::Cfloat)::Cint;
+    if ret != 0
+        @ccall libimagequant.liq_result_destroy(res[]::Ptr{Cvoid})::Cvoid
+        @ccall libimagequant.liq_image_destroy(image::Ptr{Cvoid})::Cvoid
+        @ccall libimagequant.liq_attr_destroy(attr::Ptr{Cvoid})::Cvoid
+        throw(ErrorException("Failed to quantize image with error code $ret"))
+    end
 
     ret = GC.@preserve output_data @ccall libimagequant.liq_write_remapped_image(res[]::Ptr{Cvoid},
                                                                                  image::Ptr{Cvoid},
