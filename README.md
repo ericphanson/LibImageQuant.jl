@@ -14,9 +14,9 @@ Note that color quantization is generally orthogonal to generic compression, and
 using CairoMakie, LibImageQuant
 
 fig = scatter(rand(1000), rand(1000))
+save("test-original.png", fig)
 save("test-256.png", quantize_image(fig))
 save("test-8.png", quantize_image(fig; colors=8))
-save("test-original.png", fig)
 ```
 
 You can see the results here:
