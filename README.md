@@ -6,6 +6,8 @@
 A wrapper for `libimagequant` to easily and ergonomically perform color quantization on images in Julia.
 This is particularly effective for reducing the size of plot PNGs as plots frequently use few distinct colors. LibImageQuant provides an extension for Makie so that `FigureLike` objects can be directly quantized (thanks to `colorbuffer`).
 
+Note that color quantization is generally orthogonal to generic compression, and PNGFiles, the library used by default by CairoMakie, already has reasonable compression defaults. It's suggested to use the default of 256 colors unless you know the plot you're creating is particularly limited in its color variety, like the example shown here, otherwise the colors may be compromised.
+
 ## Quick example
 
 ```julia
@@ -25,8 +27,6 @@ You can see the results here:
 | 256 colors (default) | 103 KB | ![256 colors](test-256.png) |
 | 8 colors | 62 KB | ![8 colors](test-8.png) |
 
-Note that color quantization is generally orthogonal to generic compression, and PNGFiles already has reasonable compression defaults. It's suggested to use the default of 256 colors unless you know the plot you're creating is particularly limited in its color variety, like the example shown here, otherwise the colors may be compromised.
-
 ## TODO
 
 - [ ] JLL: https://github.com/JuliaPackaging/Yggdrasil/pull/10853
@@ -34,3 +34,4 @@ Note that color quantization is generally orthogonal to generic compression, and
 - [x] convert to IndirectArray
 - [x] tests
 - [x] CairoMakie should test-only dep (or extension)
+- [ ] add kwargs corresponding to options exposed by `libimagequant`
