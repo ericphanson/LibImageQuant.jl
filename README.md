@@ -34,4 +34,4 @@ You can see the results here:
 - [x] convert to IndirectArray
 - [x] tests
 - [x] CairoMakie should test-only dep (or extension)
-- [ ] add kwargs corresponding to options exposed by `libimagequant`
+- [x] add kwargs corresponding to options exposed by `libimagequant`
