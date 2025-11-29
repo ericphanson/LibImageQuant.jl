@@ -104,6 +104,22 @@ But the more important reason is that even if a plot is "conceptually" only a fe
 
 The number of colors can be specified in `quantize_image` via the `colors` keyword argument. It defaults to 256, which is the largest allowed number of colors for a palette-based image in PNG. This means we are defaulting to better image quality (more colors) at the cost of larger file size. That is because some plots can look _terrible_ if you use too few colors, and restricting to 256 can already help a lot with file size. However, for your particular plots you can experiment with reducing further.
 
+## Inputs and outputs (and is this only for PNGs?)
+
+LibImageQuant.jl supports:
+
+- inputs: `AbstractMatrices` with `ColorTypes` entries (e.g. `Matrix{ColorTypes.ARGB32}` and similar)
+    - special support is hooked in with a package extension for Makie to perform `matrix = colorbuffer(fig)` for you, so you can pass a `Makie.FigureLike` instead of a matrix
+- outputs: `IndirectArray{ColorTypes.ARGB32}` matrices
+
+Then those `IndirectArray`'s need to be consumed by a palette-using image writer, such as PNGFiles. The TIFF format also supports palettes, and [TiffImages.jl](https://github.com/tlnagy/TiffImages.jl) consumes IndirectArrays, so I expect it works there too, but I have not tested it.
+
+Many other image formats, such as JPEGs, WebP, and AVIF, do _not_ support palette-based colors.
+
+## API
+
+The only API function of LibImageQuant.jl is `quantize_image`. See its docstring for details.
+
 ## TODO
 
 - [ ] JLL: https://github.com/JuliaPackaging/Yggdrasil/pull/10853
