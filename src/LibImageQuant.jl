@@ -11,7 +11,6 @@ const libimagequant = "/Users/eph/libimagequant/imagequant-sys/usr/local/lib/lib
 # include("generated_libimagequant.jl")
 include("../gen/libimagequant.jl")
 
-
 # objects
 using .LibImageQuantWrapper: liq_color, liq_palette, liq_result, liq_error, LIQ_OK
 
@@ -38,17 +37,13 @@ function Base.showerror(io::IO, e::LibImageQuantError)
     return print(io, "LibImageQuantError: ", e.prefix, " with code ", e.code)
 end
 
+# Input processing
 function jl_to_c(matrix)
     matrix = permutedims(matrix)
-    matrix = ColorTypes.RGBA.(matrix)
+    matrix = ColorTypes.RGBA.(matrix) # works nicely with any ColorTypes inputs
     ret = collect(reinterpret(reshape, UInt8, matrix))
     size(ret, 1) == 4 || throw(ArgumentError("expected 4 color channels"))
     return ret
-end
-
-function to_argb32(c::liq_color)
-    # why this order? it works...
-    return ARGB32(to_N0f8(c.r), to_N0f8(c.g), to_N0f8(c.b), to_N0f8(c.a))
 end
 
 function _quantize_image_matrix(matrix; colors, quality, speed, dither, posterize)
@@ -122,8 +117,6 @@ function _quantize_image_matrix(matrix; colors, quality, speed, dither, posteriz
     end
 end
 
-to_N0f8(c::UInt8) = reinterpret(ColorTypes.N0f8, c)
-
 # this provides a hook where can add dispatches to convert e.g. Makie figures
 # to matrices in extensions
 to_matrix(val) = val
@@ -156,6 +149,14 @@ save("test-8.png", quantize_image(fig; colors=8))
 """
 quantize_image(val::Any; kw...) = quantize_image_matrix(to_matrix(val); kw...)
 
+# Output-processing helpers
+to_N0f8(c::UInt8) = reinterpret(ColorTypes.N0f8, c)
+
+function to_argb32(c::liq_color)
+    # why this order? it works...
+    return ARGB32(to_N0f8(c.r), to_N0f8(c.g), to_N0f8(c.b), to_N0f8(c.a))
+end
+
 function quantize_image_matrix(matrix::AbstractMatrix{T};
                                colors::Integer=256,
                                quality::Tuple{Integer,Integer}=(0, 100),
@@ -180,7 +181,8 @@ function quantize_image_matrix(matrix::AbstractMatrix{T};
     output_data = permutedims(output_data)
 
     color_vec = to_argb32.(collect(palette.entries)[1:(palette.count)])
-    # we need our indices to be 1-based, so we have to promote from UInt8 to Int16 to get the range 1:256.
+
+    # We get UInt8 indices out of `libimgquant` (i.e. 0-255), but Julia indices must be 1-indexed (1-256). So we need to add 1, but we can do so as Int8 since we don't have the dynamic range (-128 to 128). So we need to promote to Int16 here.
     return IndirectArray(output_data .+ Int16(1), color_vec)
 end
 
