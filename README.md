@@ -48,8 +48,8 @@ You can see the results here:
 | 16 colors                  | 158 KB    | <img src="assets/test-16.png" width="400">      |
 | 4 colors                   | 102 KB    | <img src="assets/test-4.png" width="400">        |
 | 2 colors                   | 61 KB     | <img src="assets/test-2.png" width="400">        |
-Or in plot form, with all 2 to 256 colors:
 
+Or in plot form, with all 2 to 256 colors:
 
 <img src="assets/colors_vs_size.png" width="500">
 
