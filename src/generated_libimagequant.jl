@@ -3,7 +3,7 @@ module LibImageQuantWrapper
 using libimagequant_jll
 export libimagequant_jll
 
-using CEnum
+using CEnum: CEnum, @cenum
 
 mutable struct liq_attr end
 
