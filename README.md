@@ -141,12 +141,3 @@ Notes:
 
 - the GPL does not impose obligations on internal use (e.g. within a company or organization), it is concerned with distribution to third parties (and their access to the source code)
 - _plots_ and _images_ processed via libimagequant are not bound by the license for the _source code_ of libimagequant.
-
-## TODO
-
-- [ ] JLL: https://github.com/JuliaPackaging/Yggdrasil/pull/10853
-- [x] use libimagequant C library to accept pixel matrix, retrieve palette & quantized image
-- [x] convert to IndirectArray
-- [x] tests
-- [x] CairoMakie should test-only dep (or extension)
-- [x] add kwargs corresponding to options exposed by `libimagequant`

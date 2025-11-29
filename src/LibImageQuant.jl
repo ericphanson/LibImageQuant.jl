@@ -5,11 +5,7 @@ using IndirectArrays
 
 export quantize_image, LibImageQuantError
 
-# TODO- jll
-const libimagequant = "/Users/eph/libimagequant/imagequant-sys/usr/local/lib/libimagequant.dylib"
-
-# include("generated_libimagequant.jl")
-include("../gen/libimagequant.jl")
+include("generated_libimagequant.jl")
 
 # objects
 using .LibImageQuantWrapper: liq_color, liq_palette, liq_result, liq_error, LIQ_OK

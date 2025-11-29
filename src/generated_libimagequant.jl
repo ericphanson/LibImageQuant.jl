@@ -505,6 +505,18 @@ function liq_image_quantize(input_image, options, result_output)
 end
 
 """
+    liq_result_from_palette(options, palette, palette_size::Cuint, gamma::Cdouble, result_output)
+
+### Prototype
+```c
+LIQ_EXPORT LIQ_USERESULT liq_error liq_result_from_palette(const liq_attr *options, const liq_color *palette, unsigned int palette_size, double gamma, liq_result **result_output) LIQ_NONNULL;
+```
+"""
+function liq_result_from_palette(options, palette, palette_size::Cuint, gamma::Cdouble, result_output)
+    @ccall libimagequant.liq_result_from_palette(options::Ptr{liq_attr}, palette::Ptr{liq_color}, palette_size::Cuint, gamma::Cdouble, result_output::Ptr{Ptr{liq_result}})::liq_error
+end
+
+"""
     liq_set_dithering_level(res, dither_level::Cfloat)
 
 ### Prototype

@@ -1,9 +1,9 @@
 using Clang.Generators
-# using libimagequant_jll  # replace this with your jll package
+using libimagequant_jll
 
 cd(@__DIR__)
 
-artifact_dir = "/Users/eph/libimagequant/imagequant-sys/usr/local/" # libimagequant_jll.artifact_dir
+artifact_dir = libimagequant_jll.artifact_dir
 include_dir = normpath(artifact_dir, "include")
 
 options = load_options(joinpath(@__DIR__, "generator.toml"))
