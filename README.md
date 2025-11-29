@@ -135,7 +135,7 @@ The wrapper code in this repo is MIT licensed. This wrapper calls into libimageq
 > and contains extensive changes and additions by Kornel Lesiński
 > licensed under GPL v3 or later.
 
-That means if you redistribute a binary (e.g. with [PackageCompiler.jl](https://github.com/JuliaLang/PackageCompiler.jl)) that includes libimagequant, the full source needs to be available under the GPL.
+That means if you redistribute an executable (e.g. an app, a sysimage with [PackageCompiler.jl](https://github.com/JuliaLang/PackageCompiler.jl), a docker image, etc) that includes libimagequant, the full source needs to be available under the GPL.
 
 Notes:
 
