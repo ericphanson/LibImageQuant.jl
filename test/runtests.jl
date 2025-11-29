@@ -88,11 +88,11 @@ matrix = colorbuffer(fig)
 
     @testset "Combined parameters" begin
         output = quantize_image(fig;
-                               colors=16,
-                               speed=4,
-                               dither=0.5,
-                               posterize=2,
-                               quality=(30, 70))
+                                colors=16,
+                                speed=4,
+                                dither=0.5,
+                                posterize=2,
+                                quality=(30, 70))
         @test output isa IndirectArray
         @test length(output.values) <= 16
     end
@@ -116,7 +116,7 @@ matrix = colorbuffer(fig)
 
     @testset "Gradient image" begin
         uint32s = reshape(UInt32.([range(typemin(UInt32), typemax(UInt32); step=0x0000431c);
-                                  zero(UInt32)]), 500, 500)
+                                   zero(UInt32)]), 500, 500)
         matrix = reinterpret(ARGB32, uint32s)
         save(joinpath(img_dir, "test-gradient.png"), matrix)
         output = quantize_image(matrix)

@@ -11,20 +11,25 @@ Note that color quantization is generally orthogonal to generic compression, and
 ## Quick example
 
 Replace
+
 ```julia
 save("my_figure.png", fig)
 ```
+
 with
+
 ```julia
 save("my_figure.png", quantize_image(fig))
 ```
+
 for a smaller file size, at the cost of fewer colors being used in your image.
 
 Here's a full example showing the `colors` keyword argument:
+
 ```julia
 using CairoMakie, LibImageQuant, Random
 # extra sharp images, uses more space though!
-CairoMakie.activate!(px_per_unit=4, pt_per_unit=4) 
+CairoMakie.activate!(px_per_unit=4, pt_per_unit=4)
 Random.seed!(1)
 fig = scatter(rand(1000), rand(1000))
 save("assets/test-original.png", fig)
@@ -36,13 +41,13 @@ save("assets/test-2.png", quantize_image(fig; colors=2))
 
 You can see the results here:
 
-| Setting | File size | Result |
-|---------|-----------|---------|
-| Original (no quantization) | 520 KB | ![Original](assets/test-original.png) |
-| 256 colors (default) | 213 KB | ![256 colors](assets/test-256.png) |
-| 16 colors | 158 KB | ![16 colors](assets/test-16.png) |
-| 4 colors | 102 KB | ![4 colors](assets/test-4.png) |
-| 2 colors | 61 KB | ![2 colors](assets/test-2.png) |
+| Setting                    | File size | Result                                |
+| -------------------------- | --------- | ------------------------------------- |
+| Original (no quantization) | 520 KB    | ![Original](assets/test-original.png) |
+| 256 colors (default)       | 213 KB    | ![256 colors](assets/test-256.png)    |
+| 16 colors                  | 158 KB    | ![16 colors](assets/test-16.png)      |
+| 4 colors                   | 102 KB    | ![4 colors](assets/test-4.png)        |
+| 2 colors                   | 61 KB     | ![2 colors](assets/test-2.png)        |
 
 Or in plot form, with all 2 to 256 colors:
 
@@ -73,19 +78,20 @@ for n in [256, 16, 4, 2]
 end
 ```
 
-| Setting | File size | Full image | Crop |
-|---------|-----------|------------|-------|
-| Original (no quantization) | 2.5 MB | <img src="assets/heron.png" width="250"> | <img src="assets/heron-crop.png" width="250"> |
-| 256 colors | 898 KB | <img src="assets/heron-256.png" width="250"> | <img src="assets/heron-256-crop.png" width="250"> |
-| 16 colors | 355 KB | <img src="assets/heron-16.png" width="250"> | <img src="assets/heron-16-crop.png" width="250"> |
-| 4 colors | 181 KB | <img src="assets/heron-4.png" width="250"> | <img src="assets/heron-4-crop.png" width="250"> |
-| 2 colors | 127 KB | <img src="assets/heron-2.png" width="250"> | <img src="assets/heron-2-crop.png" width="250"> |
+| Setting                    | File size | Full image                                   | Crop                                              |
+| -------------------------- | --------- | -------------------------------------------- | ------------------------------------------------- |
+| Original (no quantization) | 2.5 MB    | <img src="assets/heron.png" width="250">     | <img src="assets/heron-crop.png" width="250">     |
+| 256 colors                 | 898 KB    | <img src="assets/heron-256.png" width="250"> | <img src="assets/heron-256-crop.png" width="250"> |
+| 16 colors                  | 355 KB    | <img src="assets/heron-16.png" width="250">  | <img src="assets/heron-16-crop.png" width="250">  |
+| 4 colors                   | 181 KB    | <img src="assets/heron-4.png" width="250">   | <img src="assets/heron-4-crop.png" width="250">   |
+| 2 colors                   | 127 KB    | <img src="assets/heron-2.png" width="250">   | <img src="assets/heron-2-crop.png" width="250">   |
 
-We can see already the 256-color version has visible degradation in the detailed areas around the heron's face. 
+We can see already the 256-color version has visible degradation in the detailed areas around the heron's face.
 
 ## How it works
 
 ### Color palettes
+
 Some image formats, including PNG, support custom color palettes. This allows using a fixed list of colors so that instead of storing (conceptually) `RGB(0.5, 0.75, 1.0)` over and over in the image (which is 3 bytes, or 4 with transparency) for every pixel of that color, you can (conceptually) define "color 1 is `RGB(0.5, 0.75, 1.0)`, and then just refer to "color 1". This is codified in Julia as an `IndirectArray` from [IndirectArrays.jl](https://github.com/JuliaArrays/IndirectArrays.jl), which internally stores both the value-lookup (list of colors) and array of indices into that value-lookup array.
 
 For example, instead of `[RGB(0.5, 0.75, 1.0), RGB(0.5, 0.75, 1.0), RGB(0.5, 0.75, 1.0), RGB(0.75, 0.75, 1.0)]`, you can have `indices=[1, 1, 1, 2]` and `colors=[RGB(0.5, 0.75, 1.0), RGB(1.0, 0.75, 1.0)]`.
@@ -109,7 +115,7 @@ The number of colors can be specified in `quantize_image` via the `colors` keywo
 LibImageQuant.jl supports:
 
 - inputs: `AbstractMatrices` with `ColorTypes` entries (e.g. `Matrix{ColorTypes.ARGB32}` and similar)
-    - special support is hooked in with a package extension for Makie to perform `matrix = colorbuffer(fig)` for you, so you can pass a `Makie.FigureLike` instead of a matrix
+  - special support is hooked in with a package extension for Makie to perform `matrix = colorbuffer(fig)` for you, so you can pass a `Makie.FigureLike` instead of a matrix
 - outputs: `IndirectArray{ColorTypes.ARGB32}` matrices
 
 Then those `IndirectArray`'s need to be consumed by a palette-using image writer, such as PNGFiles. The TIFF format also supports palettes, and [TiffImages.jl](https://github.com/tlnagy/TiffImages.jl) consumes IndirectArrays, so I expect it works there too, but I have not tested it.
