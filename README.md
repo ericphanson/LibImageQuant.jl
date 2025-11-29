@@ -43,15 +43,15 @@ You can see the results here:
 
 | Setting                    | File size | Result                                |
 | -------------------------- | --------- | ------------------------------------- |
-| Original (no quantization) | 520 KB    | ![Original](assets/test-original.png) |
-| 256 colors (default)       | 213 KB    | ![256 colors](assets/test-256.png)    |
-| 16 colors                  | 158 KB    | ![16 colors](assets/test-16.png)      |
-| 4 colors                   | 102 KB    | ![4 colors](assets/test-4.png)        |
-| 2 colors                   | 61 KB     | ![2 colors](assets/test-2.png)        |
-
+| Original (no quantization) | 520 KB    | <img src="assets/test-original.png" width="400"> |
+| 256 colors (default)       | 213 KB    | <img src="assets/test-256.png" width="400">    |
+| 16 colors                  | 158 KB    | <img src="assets/test-16.png" width="400">      |
+| 4 colors                   | 102 KB    | <img src="assets/test-4.png" width="400">        |
+| 2 colors                   | 61 KB     | <img src="assets/test-2.png" width="400">        |
 Or in plot form, with all 2 to 256 colors:
 
-![colors vs size](./assets/colors_vs_size.png)
+
+<img src="assets/colors_vs_size.png" width="500">
 
 as produced by [./colors_vs-size.jl](./colors_vs_size.jl). I'm not sure why there's a big spike at 3 colors!
 
