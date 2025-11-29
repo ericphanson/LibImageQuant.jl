@@ -126,6 +126,22 @@ Many other image formats, such as JPEGs, WebP, and AVIF, do _not_ support palett
 
 The only API function of LibImageQuant.jl is `quantize_image`. See its docstring for details.
 
+## License
+
+The wrapper code in this repo is MIT licensed. This wrapper calls into libimagequant which has its [own license](https://github.com/ImageOptim/libimagequant/blob/main/COPYRIGHT):
+
+> libimagequant is derived from code by Jef Poskanzer and Greg Roelofs
+> licensed under pngquant's original license (at the end of this file),
+> and contains extensive changes and additions by Kornel Lesiński
+> licensed under GPL v3 or later.
+
+That means if you redistribute a binary (e.g. with [PackageCompiler.jl](https://github.com/JuliaLang/PackageCompiler.jl)) that includes libimagequant, the full source needs to be available under the GPL.
+
+Notes:
+
+- the GPL does not impose obligations on internal use (e.g. within a company or organization), it is concerned with distribution to third parties (and their access to the source code)
+- _plots_ and _images_ processed via libimagequant are not bound by the license for the _source code_ of libimagequant.
+
 ## TODO
 
 - [ ] JLL: https://github.com/JuliaPackaging/Yggdrasil/pull/10853
