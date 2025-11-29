@@ -10,15 +10,15 @@ Note that color quantization is generally orthogonal to generic compression, and
 
 ## Quick example
 
-Basically, whenever you are going to do 
+Replace
 ```julia
 save("my_figure.png", fig)
 ```
-you can replace it with
+with
 ```julia
 save("my_figure.png", quantize_image(fig))
 ```
-for a smaller file size.
+for a smaller file size, at the cost of fewer colors being used in your image.
 
 Here's a full example showing the `colors` keyword argument:
 ```julia
