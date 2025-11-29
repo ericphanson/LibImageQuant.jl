@@ -8,7 +8,9 @@ export quantize_image, LibImageQuantError
 # TODO- jll
 const libimagequant = "/Users/eph/libimagequant/imagequant-sys/usr/local/lib/libimagequant.dylib"
 
+# include("generated_libimagequant.jl")
 include("../gen/libimagequant.jl")
+
 
 # objects
 using .LibImageQuantWrapper: liq_color, liq_palette, liq_result, liq_error, LIQ_OK
@@ -122,11 +124,11 @@ end
 
 to_N0f8(c::UInt8) = reinterpret(ColorTypes.N0f8, c)
 
-# this provides a hook where can add dispaches to convert e.g. Makie figures
+# this provides a hook where can add dispatches to convert e.g. Makie figures
 # to matrices in extensions
 to_matrix(val) = val
 
-# the outer function just calls `to_matrix` then dispaches to `quantize_image_matrix`
+# the outer function just calls `to_matrix` then dispatches to `quantize_image_matrix`
 """
     quantize_image(val; colors=256, quality=(0,100), speed=4, dither=1.0, posterize=0)
 

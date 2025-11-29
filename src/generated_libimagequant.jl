@@ -1,8 +1,7 @@
 module LibImageQuantWrapper
-# TODO- delete this file, use the one in src/ once we have a JLL
-# using LibImageQuant_jll
-# export LibImageQuant_jll
-const libimagequant = "/Users/eph/libimagequant/imagequant-sys/usr/local/lib/libimagequant.dylib"
+
+using libimagequant_jll
+export libimagequant_jll
 
 using CEnum
 

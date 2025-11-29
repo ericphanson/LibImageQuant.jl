@@ -4,7 +4,7 @@
 [![Coverage](https://codecov.io/gh/ericphanson/LibImageQuant.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/ericphanson/LibImageQuant.jl)
 
 A wrapper for `libimagequant` to easily and ergonomically perform color quantization on images in Julia.
-This is particularly effective for reducing the size of plot PNGs as plots frequently use few distinct colors. LibImageQuant provides an extension for Makie so that `FigureLike` objects can be directly quantized (thanks to `colorbuffer`).
+This is particularly effective for reducing the size of plot PNGs as plots (in contrast to e.g. photographs) frequently use few distinct colors. LibImageQuant provides an extension for Makie so that `FigureLike` objects can be directly quantized (thanks to `colorbuffer`).
 
 Note that color quantization is generally orthogonal to generic compression, and PNGFiles, the library used by default by CairoMakie, already has reasonable compression defaults. It's suggested to use the default of 256 colors unless you know the plot you're creating is particularly limited in its color variety, like the example shown here, otherwise the colors may be compromised.
 

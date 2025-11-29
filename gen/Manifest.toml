@@ -1,8 +1,8 @@
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.11.3"
+julia_version = "1.11.7"
 manifest_format = "2.0"
-project_hash = "f8ce466db935028989b7e9632ad6b3e067667257"
+project_hash = "898b4292dc6739497052630b1700d698ae58b646"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -162,7 +162,7 @@ version = "1.2.13+1"
 [[deps.libLLVM_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8f36deef-c2a5-5394-99ed-8e07531fb29a"
-version = "16.0.6+4"
+version = "16.0.6+5"
 
 [[deps.nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]

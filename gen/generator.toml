@@ -1,8 +1,8 @@
 [general]
 library_name = "libimagequant"
-output_file_path = "./libimagequant.jl"
+output_file_path = "../src/generated_libimagequant.jl"
 module_name = "LibImageQuantWrapper"
-jll_pkg_name = "LibImageQuant_jll"
+jll_pkg_name = "libimagequant_jll"
 export_symbol_prefixes = []
 show_c_function_prototype = true
 
