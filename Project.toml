@@ -1,7 +1,7 @@
 name = "LibImageQuant"
 uuid = "65eadcc4-e045-440a-9e0d-07418b613f72"
-authors = ["Eric P. Hanson"]
 version = "1.0.0"
+authors = ["Eric P. Hanson"]
 
 [deps]
 CEnum = "fa961155-64e5-5f13-b03f-caf6b980ea82"
@@ -16,16 +16,18 @@ MakieExt = "Makie"
 
 [compat]
 CEnum = "0.5.0"
-CairoMakie = "0.13.2"
+CairoMakie = "0.13.2, 0.14, 0.15"
 ColorTypes = "0.12.0"
 IndirectArrays = "1.0.0"
-Makie = "0.20, 0.21, 0.22"
+Makie = "0.20, 0.21, 0.22, 0.23, 0.24"
+Random = "<0.0.1, 1"
 julia = "1.10"
 
 [extras]
 CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "Makie", "CairoMakie"]
+test = ["Test", "Makie", "CairoMakie", "Random"]
