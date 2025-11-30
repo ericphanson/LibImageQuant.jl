@@ -63,10 +63,10 @@ Here's an example where color quantization does not work as well:
 using CairoMakie, LibImageQuant, PNGFiles
 CairoMakie.activate!(px_per_unit=1)
 # https://ericphanson.com/photos/?photo=photos%2F2025%2F11%2FP1038134-0464108A
-img = PNGFiles.load("heron.png")
+img = PNGFiles.load("assets/heron.png")
 img = rotr90(img)
 
-fig = Figure(; size=size(img));
+fig = Figure(; size=size(img), figure_padding=0.0);
 ax = Axis(fig[1,1], aspect = DataAspect())
 hidedecorations!(ax)
 image!(ax, img)
@@ -141,3 +141,4 @@ Notes:
 
 - the GPL does not impose obligations on internal use (e.g. within a company or organization), it is concerned with distribution to third parties (and their access to the source code)
 - _plots_ and _images_ processed via libimagequant are not bound by the license for the _source code_ of libimagequant.
+- they offer a [commercial license](https://github.com/ImageOptim/libimagequant/tree/main?tab=readme-ov-file#license) as well
