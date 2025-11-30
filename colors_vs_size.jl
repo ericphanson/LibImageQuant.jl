@@ -7,11 +7,11 @@ fig = scatter(rand(1000), rand(1000))
 results = []
 tmp = mktempdir()
 for n in 2:256
-    save("$tmp/test-$n.png", quantize_image(fig; colors=n))
+    save("$tmp/test-$n.png", quantize_image(fig; colors=n); filters=0)
     push!(results, (; n, bytes=stat("$tmp/test-$n.png").size))
 end
 
 plt = Figure();
 ax = Axis(plt[1, 1]; xlabel="Number of colors", ylabel="Number of bytes")
 lines!(ax, [row.n for row in results], [row.bytes for row in results])
-save("colors_vs_size.png", quantize_image(plt))
+save("assets/colors_vs_size.png", quantize_image(plt); filters=0)

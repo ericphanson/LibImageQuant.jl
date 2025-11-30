@@ -4,3 +4,4 @@
 /Manifest.toml
 test/images
 bench/results/*.png
+dev

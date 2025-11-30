@@ -31,23 +31,25 @@ using CairoMakie, LibImageQuant, Random
 # extra sharp images, uses more space though!
 CairoMakie.activate!(px_per_unit=4, pt_per_unit=4)
 Random.seed!(1)
-fig = scatter(rand(1000), rand(1000))
-save("assets/test-original.png", fig)
-save("assets/test-256.png", quantize_image(fig))
-save("assets/test-16.png", quantize_image(fig; colors=16))
-save("assets/test-4.png", quantize_image(fig; colors=4))
-save("assets/test-2.png", quantize_image(fig; colors=2))
+fig = scatter(rand(1000), rand(1000));
+save("assets/test-original.png", fig; filters=0)
+for n in [256, 16, 4, 2]
+  PNGFiles.save("assets/test-$n.png", quantize_image(fig; colors=n); filters=0)
+end
+
 ```
+
+
 
 You can see the results here:
 
 | Setting                    | File size | Result                                |
 | -------------------------- | --------- | ------------------------------------- |
 | Original (no quantization) | 520 KB    | <img src="assets/test-original.png" width="400"> |
-| 256 colors (default)       | 213 KB    | <img src="assets/test-256.png" width="400">    |
-| 16 colors                  | 158 KB    | <img src="assets/test-16.png" width="400">      |
-| 4 colors                   | 102 KB    | <img src="assets/test-4.png" width="400">        |
-| 2 colors                   | 61 KB     | <img src="assets/test-2.png" width="400">        |
+| 256 colors (default)       | 188 KB    | <img src="assets/test-256.png" width="400">    |
+| 16 colors                  | 140 KB    | <img src="assets/test-16.png" width="400">      |
+| 4 colors                   | 92 KB    | <img src="assets/test-4.png" width="400">        |
+| 2 colors                   | 72 KB     | <img src="assets/test-2.png" width="400">        |
 
 Or in plot form, with all 2 to 256 colors:
 
@@ -56,6 +58,14 @@ Or in plot form, with all 2 to 256 colors:
 as produced by [./colors_vs-size.jl](./colors_vs_size.jl). I'm not sure why there's a big spike at 3 colors!
 
 Likely 2/4/16/256 are good choices, since they correspond to the supported bit depths in PNGs.
+
+
+Note: here we use the `filters=0` keyword argument to `save` which results in better compression for paletted plots. This mimics what `pngquant` does when it saves out PNGs. However, despite some experimentation, I haven't been able to match pngquant's results with additional keyword arguments; e.g. pngquant gets 177 KB for the 256 color version instead of 188 KB. You can compare with:
+
+```julia
+colors = 256
+run(`pngquant --colors $colors assets/test-original.png --output assets/test-pngquant-$colors.png --force`)
+```
 
 Here's an example where color quantization does not work as well:
 
