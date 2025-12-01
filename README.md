@@ -19,11 +19,24 @@ save("my_figure.png", fig)
 with
 
 ```julia
-save("my_figure.png", quantize_image(fig))
+save("my_figure.png", quantize_image(fig); filters=0)
 ```
 
 for a smaller file size, at the cost of fewer colors being used in your image.
+Note: `filters=0` isn't strictly necessary, but often helps shrink sizes further.
 
+If you need to pass Makie-specific arguments, like `px_per_unit` or `pt_per_unit`, you
+can do so by calling `colorbuffer` with those arguments before `quantize_image`:
+```julia
+save("my_figure.png", quantize_image(colorbuffer(fig; px_per_unit=4)); filters=0)
+```
+
+Or use `activate!` to change the settings globally:
+
+```julia
+CairoMakie.activate!(; px_per_unit=4)
+save("my_figure.png", quantize_image(fig); filters=0)
+```
 Here's a full example showing the `colors` keyword argument:
 
 ```julia
@@ -67,7 +80,9 @@ colors = 256
 run(`pngquant --colors $colors assets/test-original.png --output assets/test-pngquant-$colors.png --force`)
 ```
 
-Here's an example where color quantization does not work as well:
+I've found `pngquant` to be a bit slower but with smaller file sizes; I suspect there is some mismatch of settings (after all, we're both using libpng and libimagequant behind the scenes) but I'm not sure what it is.
+
+And here's an example where color quantization does not work as well:
 
 ```julia
 using CairoMakie, LibImageQuant, PNGFiles
