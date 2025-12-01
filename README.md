@@ -27,6 +27,7 @@ Note: `filters=0` isn't strictly necessary, but often helps shrink sizes further
 
 If you need to pass Makie-specific arguments, like `px_per_unit` or `pt_per_unit`, you
 can do so by calling `colorbuffer` with those arguments before `quantize_image`:
+
 ```julia
 save("my_figure.png", quantize_image(colorbuffer(fig; px_per_unit=4)); filters=0)
 ```
@@ -37,6 +38,7 @@ Or use `activate!` to change the settings globally:
 CairoMakie.activate!(; px_per_unit=4)
 save("my_figure.png", quantize_image(fig); filters=0)
 ```
+
 Here's a full example showing the `colors` keyword argument:
 
 ```julia
@@ -52,16 +54,14 @@ end
 
 ```
 
-
-
 You can see the results here:
 
-| Setting                    | File size | Result                                |
-| -------------------------- | --------- | ------------------------------------- |
+| Setting                    | File size | Result                                           |
+| -------------------------- | --------- | ------------------------------------------------ |
 | Original (no quantization) | 520 KB    | <img src="assets/test-original.png" width="400"> |
-| 256 colors (default)       | 188 KB    | <img src="assets/test-256.png" width="400">    |
-| 16 colors                  | 140 KB    | <img src="assets/test-16.png" width="400">      |
-| 4 colors                   | 92 KB    | <img src="assets/test-4.png" width="400">        |
+| 256 colors (default)       | 188 KB    | <img src="assets/test-256.png" width="400">      |
+| 16 colors                  | 140 KB    | <img src="assets/test-16.png" width="400">       |
+| 4 colors                   | 92 KB     | <img src="assets/test-4.png" width="400">        |
 | 2 colors                   | 72 KB     | <img src="assets/test-2.png" width="400">        |
 
 Or in plot form, with all 2 to 256 colors:
@@ -71,7 +71,6 @@ Or in plot form, with all 2 to 256 colors:
 as produced by [./colors_vs-size.jl](./colors_vs_size.jl). I'm not sure why there's a big spike at 3 colors!
 
 Likely 2/4/16/256 are good choices, since they correspond to the supported bit depths in PNGs.
-
 
 Note: here we use the `filters=0` keyword argument to `save` which results in better compression for paletted plots. This mimics what `pngquant` does when it saves out PNGs. However, despite some experimentation, I haven't been able to match pngquant's results with additional keyword arguments; e.g. pngquant gets 177 KB for the 256 color version instead of 188 KB. You can compare with:
 
